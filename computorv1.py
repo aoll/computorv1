@@ -1,4 +1,5 @@
 import sys
+import re
 from math import sqrt
 
 def test(a1, a2):
@@ -47,8 +48,85 @@ def calculate_premier(des, a, b, c):
 	x = -b / (2*a)
 	print(x)
 
+def found_puissance(str):
+	"""Take a string X^x where x is integer and return this integer else
+	return -1"""
+	x = -1
+	try:
+		s = str.replace('X^', '')
+		x = float(s)
+	except:
+		return -1
+	return x
+
+def is_infinite_solution(s):
+	"""Take a string and check if the equation before and after '=' are the same
+	"""
+	try:
+		tab = s.split('=')
+		if tab[0].strip() == tab[1].strip():
+			return 1
+	except:
+		return -1
+	return 0
+
+def decompose_right(s):
+	"""Return a array with each elem before the '='"""
+	tab = s.strip().split(' ')
+	return tab
+
+def decompose_left(s):
+	tab = s.strip().split(' ')
+
+	x = {}
+	x['nb'] = float(tab[0])
+	p = found_puissance(tab[2])
+	x['str'] = tab[2]
+	if p != -1:
+		x['degre'] = p
+	else:
+		x['degre'] = 0
+	return x
+
+def calculate_reduced(tab, di, i, l):
+	if i - 2 >= 0 and tab[i - 1] == '*':
+		tab[i - 2] = float(tab[i - 2]) - di['nb']
+		return tab
+	if i + 2 < l and tab[i + 1] == '*':
+		tab[i + 2] = float(tab[i + 2]) - di['nb']
+		return tab
+	return
+
+def found_reduced_form(tab, di):
+	l = len(tab)
+	i = 0
+	while i < l:
+		if tab[i] == di['str']:
+			tmp = calculate_reduced(tab, di, i, l)
+			if tmp:
+				return tmp
+		i += 1
+	return tab
+
 if __name__ == '__main__':
-        # resolve_simple(sys.argv[1])
+		# resolve_simple(sys.argv[1])
+		if is_infinite_solution(sys.argv[1]) == 1:
+			print('0 = 0\nThe solution are infinite')
+			sys.exit()
+		# decompose(sys.argv[1])
+		tab = sys.argv[1].strip().split('=')
+		right = tab[0].strip()
+		left = tab[1].strip()
+		di_left = decompose_left(left)
+		tab_right = decompose_right(right)
+		print(di_left)
+		print(tab_right)
+		tmp = found_reduced_form(tab_right, di_left)
+		print(tmp)
+		sys.exit()
+
+
+
 		a = float(sys.argv[1])
 		b = float(sys.argv[2])
 		c = float(sys.argv[3])
