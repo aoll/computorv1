@@ -89,6 +89,7 @@ def decompose_left(s):
 	return x
 
 def calculate_reduced(tab, di, i, l):
+	# TODO checker si c'est un double ou pas
 	if i - 2 >= 0 and tab[i - 1] == '*':
 		tab[i - 2] = float(tab[i - 2]) - di['nb']
 		return tab
@@ -108,6 +109,27 @@ def found_reduced_form(tab, di):
 		i += 1
 	return tab
 
+def print_reduced(tab):
+	s = 'Reduced form:'
+	for t in tab:
+		s += ' '
+		s += str(t)
+		# replace a enlever une fois que calculate_reduced TODO done
+		s = s.replace('.0', '')
+	s += ' = 0'
+	print(s)
+
+def replace_puissance(tab):
+	l = len(tab)
+	i = 0
+	while i < l:
+		if str(tab[i]) == 'X^0':
+			tab[i] = 1
+		if str(tab[i]) == 'X^1':
+			tab[i] = 'X'
+		i += 1
+	return tab
+
 if __name__ == '__main__':
 		# resolve_simple(sys.argv[1])
 		if is_infinite_solution(sys.argv[1]) == 1:
@@ -121,8 +143,11 @@ if __name__ == '__main__':
 		tab_right = decompose_right(right)
 		print(di_left)
 		print(tab_right)
-		tmp = found_reduced_form(tab_right, di_left)
-		print(tmp)
+		tab_reduced = found_reduced_form(tab_right, di_left)
+		print(tab_reduced)
+		print_reduced(tab_reduced)
+		tab_reduced = replace_puissance(tab_reduced)
+		print(tab_reduced)
 		sys.exit()
 
 
