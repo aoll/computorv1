@@ -284,30 +284,6 @@ def decompose_x_detail_v2(d, s):
 		d['c'] += x_detail(s.split(' '))
 	return d
 
-def decompose_x_detail_v2_save(d, s):
-	tab = s.split(' ')
-	for v in tab:
-		if re.match('X', v):
-			if v in d:
-				d[v] += x_detail(tab)
-			else:
-				# d[v] = 0
-				d[v] = x_detail(tab)
-		else:
-			print(v)
-			# d['c'] += x_detail(tab)
-		#
-		# if v == 'X^0':
-		# 	d['X^0'] += x_detail(tab)
-		# 	return d
-		# if v == 'X^1':
-		# 	d['X^1'] += x_detail(tab)
-		# 	return d
-		# if v == 'X^2':
-		# 	d['X^2'] += x_detail(tab)
-		# 	return d
-	return d
-
 def decompose_x(s):
 	d = {}
 	# d['X^0'] = 0
