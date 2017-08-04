@@ -272,6 +272,26 @@ def decompose_x_detail(d, s):
 	d['c'] += x_detail(tab)
 	return d
 
+def decompose_x_detail_v2(d, s):
+	tab = s.split(' ')
+	for v in tab:
+		if re.match('X', v):
+			if d[v] == None:
+				d[v] = 0
+			# d[v] = x_detail(tab)
+
+		if v == 'X^0':
+			d['X^0'] += x_detail(tab)
+			return d
+		if v == 'X^1':
+			d['X^1'] += x_detail(tab)
+			return d
+		if v == 'X^2':
+			d['X^2'] += x_detail(tab)
+			return d
+	d['c'] += x_detail(tab)
+	return d
+
 def decompose_x(s):
 	d = {}
 	d['X^0'] = 0
@@ -280,7 +300,7 @@ def decompose_x(s):
 	d['c'] = 0
 	tab = s.split('+')
 	for v in tab:
-		d = decompose_x_detail(d, v)
+		d = decompose_x_detail_v2(d, v)
 	return d
 
 
@@ -291,35 +311,23 @@ def merge_d(left_x, right_x):
 	left_x['c'] -= right_x['c']
 	return left_x
 
+def merge_d_v2(left_x, right_x):
+	for v in left_x:
+		left_x[v] -= right_x[v]
+	return left_x
 
-def print_reduced_v2(d):
+def print_reduced_v2_v2(d):
 	s = None
-	if d['X^0']:
-		s = ''
-		s += str(d['X^0']) + ' * X^0'
-	if d['X^1']:
-		if s:
-			s += ' + '
-		else:
-			s = ''
-		s += str(d['X^1']) + ' * X^1'
-
-	if d['X^2']:
-		if s:
-			s += ' + '
-		else:
-			s = ''
-		s += str(d['X^2']) + ' * X^2'
-
-	if d['c']:
-		if s:
-			s += ' + '
-		else:
-			s = ''
-		s += str(d['c'])
-
-	s += ' = 0'
-	print(s)
+	for v in d:
+		if d[v]:
+			if s:
+				s += ' + '
+			else:
+				s = ''
+			s += str(d[v])
+			if v != 'c':
+				s += ' * ' + v
+	print('Reduced form: ' + s + ' = 0')
 
 def v2(s):
 	s = s.replace('- ', ' + -')
@@ -329,13 +337,16 @@ def v2(s):
 	right = split[1].strip()
 	left_x = decompose_x(left)
 	right_x = decompose_x(right)
+
 	print(left_x)
 	print(right_x)
-	reduced = merge_d(left_x, right_x)
+	# sys.exit()
+	reduced = merge_d_v2(left_x, right_x)
 	print('\n')
 	print(reduced)
 	print('\n')
-	print_reduced_v2(reduced)
+	# print_reduced_v2(reduced)
+	print_reduced_v2_v2(reduced)
 
 
 
