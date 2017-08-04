@@ -286,9 +286,6 @@ def decompose_x_detail_v2(d, s):
 
 def decompose_x(s):
 	d = {}
-	# d['X^0'] = 0
-	# d['X^1'] = 0
-	# d['X^2'] = 0
 	d['c'] = 0
 	tab = s.split('+')
 	for v in tab:
@@ -298,7 +295,8 @@ def decompose_x(s):
 
 def merge_d_v2(left_x, right_x):
 	for v in left_x:
-		left_x[v] -= right_x[v]
+		if v in right_x:
+			left_x[v] -= right_x[v]
 	return left_x
 
 def print_reduced_v2_v2(d):
