@@ -273,43 +273,52 @@ def decompose_x_detail(d, s):
 	return d
 
 def decompose_x_detail_v2(d, s):
+	v = re.search('X\^[0-9]*', s)
+	if v:
+		v = v.group(0)
+		if v in d:
+			d[v] += x_detail(s.split(' '))
+		else:
+			d[v] = x_detail(s.split(' '))
+	else:
+		d['c'] += x_detail(s.split(' '))
+	return d
+
+def decompose_x_detail_v2_save(d, s):
 	tab = s.split(' ')
 	for v in tab:
 		if re.match('X', v):
-			if d[v] == None:
-				d[v] = 0
-			# d[v] = x_detail(tab)
-
-		if v == 'X^0':
-			d['X^0'] += x_detail(tab)
-			return d
-		if v == 'X^1':
-			d['X^1'] += x_detail(tab)
-			return d
-		if v == 'X^2':
-			d['X^2'] += x_detail(tab)
-			return d
-	d['c'] += x_detail(tab)
+			if v in d:
+				d[v] += x_detail(tab)
+			else:
+				# d[v] = 0
+				d[v] = x_detail(tab)
+		else:
+			print(v)
+			# d['c'] += x_detail(tab)
+		#
+		# if v == 'X^0':
+		# 	d['X^0'] += x_detail(tab)
+		# 	return d
+		# if v == 'X^1':
+		# 	d['X^1'] += x_detail(tab)
+		# 	return d
+		# if v == 'X^2':
+		# 	d['X^2'] += x_detail(tab)
+		# 	return d
 	return d
 
 def decompose_x(s):
 	d = {}
-	d['X^0'] = 0
-	d['X^1'] = 0
-	d['X^2'] = 0
+	# d['X^0'] = 0
+	# d['X^1'] = 0
+	# d['X^2'] = 0
 	d['c'] = 0
 	tab = s.split('+')
 	for v in tab:
 		d = decompose_x_detail_v2(d, v)
 	return d
 
-
-def merge_d(left_x, right_x):
-	left_x['X^0'] -= right_x['X^0']
-	left_x['X^1'] -= right_x['X^1']
-	left_x['X^2'] -= right_x['X^2']
-	left_x['c'] -= right_x['c']
-	return left_x
 
 def merge_d_v2(left_x, right_x):
 	for v in left_x:
