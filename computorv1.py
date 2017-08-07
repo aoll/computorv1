@@ -212,7 +212,10 @@ def v2(s):
 
 if __name__ == '__main__':
 		# resolve_simple(sys.argv[1])
-		v2(sys.argv[1].strip())
+		try:
+			v2(sys.argv[1].strip())
+		except:
+			pass
 		sys.exit()
 		if is_infinite_solution(sys.argv[1]) == 1:
 			print('Every real number are solution')
