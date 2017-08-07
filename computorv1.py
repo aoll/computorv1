@@ -53,160 +53,6 @@ def calculate_second(a, b, c):
 	print(x2)
 
 
-def found_puissance(str):
-	"""Take a string X^x where x is integer and return this integer else
-	return -1"""
-	x = -1
-	try:
-		s = str.replace('X^', '')
-		x = float(s)
-	except:
-		return -1
-	return x
-
-def is_infinite_solution(s):
-	"""Take a string and check if the equation before and after '=' are the same
-	"""
-	try:
-		tab = s.split('=')
-		if tab[0].strip() == tab[1].strip():
-			return 1
-	except:
-		return -1
-	return 0
-
-def decompose_right(s):
-	"""Return a array with each elem before the '='"""
-	tab = s.strip().split(' ')
-	return tab
-
-def decompose_left(s):
-	tab = s.strip().split(' ')
-
-	x = {}
-	x['nb'] = float(tab[0])
-	p = found_puissance(tab[2])
-	x['str'] = tab[2]
-	if p != -1:
-		x['degre'] = p
-	else:
-		x['degre'] = 0
-	return x
-
-def calculate_reduced(tab, di, i, l):
-	# TODO checker si c'est un double ou pas
-	if i - 2 >= 0 and tab[i - 1] == '*':
-		tab[i - 2] = float(tab[i - 2]) - di['nb']
-		return tab
-	if i + 2 < l and tab[i + 1] == '*':
-		tab[i + 2] = float(tab[i + 2]) - di['nb']
-		return tab
-	return
-
-def found_reduced_form(tab, di):
-	l = len(tab)
-	i = 0
-	while i < l:
-		if tab[i] == di['str']:
-			tmp = calculate_reduced(tab, di, i, l)
-			if tmp:
-				return tmp
-		i += 1
-	return tab
-
-def print_reduced(tab):
-	s = 'Reduced form:'
-	for t in tab:
-		s += ' '
-		s += str(t)
-		# replace a enlever une fois que calculate_reduced TODO done
-		s = s.replace('.0', '')
-	s += ' = 0'
-	print(s)
-
-def print_reduced_degre(tab):
-	x = 0
-	for v in tab:
-		if isinstance(v, str) and re.match('X\^', v):
-			tmp = v.replace('X^', '')
-			tmp = int(tmp)
-			if tmp > x:
-				x = tmp
-	s = 'Polynomial degree: ' + str(x)
-	if x > 2:
-		print("The polynomial degree is stricly greater than 2, I can't solve.")
-		sys.exit()
-	print(s)
-
-def replace_puissance(tab):
-	l = len(tab)
-	i = 0
-	while i < l:
-		if str(tab[i]) == 'X^0':
-			tab[i] = 1
-		if str(tab[i]) == 'X^1':
-			tab[i] = 'X'
-		i += 1
-	return tab
-
-def sort_puissance(tab):
-	l = len(tab)
-	i = 0
-	while i < l:
-		if tab[i] == '*':
-			if re.match('X', str(tab[i - 1])) and re.match('X', str(tab[i + 1])) == None:
-				tmp = tab[i - 1]
-				tab[i - 1] = tab[i + 1]
-				tab[i + 1] = tmp
-				i = -1
-		i += 1
-	return tab
-
-def cast_to_float(tab):
-	l = len(tab)
-	i = 0
-	while i < l:
-		try:
-			tab[i] = float(tab[i])
-		except:
-			pass
-		i += 1
-	return tab
-
-def replace_less(tab):
-	l = len(tab)
-	i = 0
-	while i < l:
-		try:
-			if str(tab[i]) == '-':
-				tab[i + 1] = tab[i + 1] * -1
-				tab[i] = '+'
-		except:
-			pass
-		i += 1
-	return tab
-
-def resolve_multi(tab):
-	i = 0
-	while i < len(tab):
-		if str(tab[i]) == '*':
-			if isinstance(tab[i - 1], float) and isinstance(tab[i + 1], float):
-				tab[i] = tab[i - 1] * tab[i + 1]
-				tab.pop(i - 1)
-				tab.pop(i)
-		i += 1
-	return tab
-
-def resolve_div(tab):
-	i = 0
-	while i < len(tab):
-		if str(tab[i]) == '/':
-			if isinstance(tab[i - 1], float) and isinstance(tab[i + 1], float):
-				tab[i] = tab[i - 1] / tab[i + 1]
-				tab.pop(i - 1)
-				tab.pop(i)
-		i += 1
-	return tab
 
 
 # V2
@@ -238,8 +84,8 @@ def decompose_x_detail_v2(d, s):
 			d[v] += x_detail(s.split(' '))
 		else:
 			d[v] = x_detail(s.split(' '))
-	else:
-		d['c'] += x_detail(s.split(' '))
+	# else:
+	# 	d['c'] += x_detail(s.split(' '))
 	return d
 
 def decompose_x(s):
@@ -326,6 +172,13 @@ def print_reduced_degre_v2(d):
 	return degre_f
 
 def resolve_v2(d, degre):
+	tmp = 0
+	for v in d:
+		if float(d[v]) != 0.0:
+			tmp = 1
+	if tmp == 0:
+		print('Every real are solution.')
+		sys.exit()
 	if  degre > 1:
 		calculate_second(d['X^2'], d['X^1'], d['X^0'])
 	else:
