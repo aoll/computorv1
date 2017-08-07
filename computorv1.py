@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 import sys
 import re
 # from math import sqrt
@@ -209,34 +210,6 @@ def resolve_div(tab):
 
 
 # V2
-
-def resolve(tab):
-	a = 0.0
-	b = 0
-	c = 0
-	i = 0
-	l = len(tab)
-	while i < l:
-		if str(tab[i]) == '*':
-			if (tab[i + 1]) == 'X^2':
-				a += tab[i - 1]
-				tab[i - 1] = 0
-				tab[i + 1] = 0
-				tab[i] = '+'
-			if (tab[i + 1]) == 'X':
-				b += tab[i - 1]
-				tab[i - 1] = 0
-				tab[i + 1] = 0
-				tab[i] = '+'
-		i += 1
-	for v in tab:
-		if isinstance(v, float):
-			c += v
-	if a:
-		calculate_second(a, b, c)
-	else:
-		calculate_simple(b, c)
-
 def x_detail(tab):
 	c = 1.0
 	first = 0
@@ -257,23 +230,8 @@ def x_detail(tab):
 		i += 1
 	return c
 
-def decompose_x_detail(d, s):
-	tab = s.split(' ')
-	for v in tab:
-		if v == 'X^0':
-			d['X^0'] += x_detail(tab)
-			return d
-		if v == 'X^1':
-			d['X^1'] += x_detail(tab)
-			return d
-		if v == 'X^2':
-			d['X^2'] += x_detail(tab)
-			return d
-	d['c'] += x_detail(tab)
-	return d
-
 def decompose_x_detail_v2(d, s):
-	v = re.search('X\^[0-9]*', s)
+	v = re.search('X\^-?[0-9]*.?[0-9]', s)
 	if v:
 		v = v.group(0)
 		if v in d:
@@ -286,7 +244,6 @@ def decompose_x_detail_v2(d, s):
 
 def decompose_x(s):
 	d = {}
-	d['c'] = 0
 	tab = s.split('+')
 	for v in tab:
 		d = decompose_x_detail_v2(d, v)
@@ -294,6 +251,11 @@ def decompose_x(s):
 
 
 def merge_d_v2(left_x, right_x):
+	for t in right_x:
+		if t not in left_x:
+			left_x[t] = 0.0
+
+
 	for v in left_x:
 		if v in right_x:
 			left_x[v] -= right_x[v]
@@ -301,16 +263,74 @@ def merge_d_v2(left_x, right_x):
 
 def print_reduced_v2_v2(d):
 	s = None
+	first = 0
 	for v in d:
-		if d[v]:
+		if d[v] or d[v] == 0.0:
 			if s:
-				s += ' + '
+				first = 1
+				if d[v] >= 0:
+					s += ' + '
+				else:
+					s += ' '
 			else:
+				first = 0
 				s = ''
-			s += str(d[v])
+			i = float(int(d[v]))
+			tmp = d[v]
+			if i == d[v]:
+				tmp = int(d[v])
+			tmp = str(tmp)
+			if first > 0:
+				tmp = tmp.replace('-', '- ')
+			s += tmp
 			if v != 'c':
 				s += ' * ' + v
 	print('Reduced form: ' + s + ' = 0')
+
+def check_degre_double(d):
+	degre = 0
+	degre_f = 0
+	for v in d:
+		if v == 'c':
+			continue
+		s = v.replace('X^', '')
+		f = float(s)
+		i = float(int(f))
+		if i != f:
+			print("The polynomial degree is double, I can't solve.")
+			sys.exit()
+		if i < 0:
+			print("The polynomial degree is negative, I can't solve.")
+			sys.exit()
+
+def print_reduced_degre_v2(d):
+	degre = 0
+	degre_f = 0
+	for v in d:
+		if v == 'c':
+			continue
+		s = v.replace('X^', '')
+		f = float(s)
+		if f > degre_f:
+			degre_f = f
+
+	degre = float(int(degre_f))
+	rest = degre_f - degre
+	if degre == degre_f:
+		degre_f = int(degre_f)
+	print('Polynomial degree: '+str(degre_f))
+	if degre_f > 2:
+		print("The polynomial degree is stricly greater than 2, I can't solve.")
+		sys.exit()
+	check_degre_double(d)
+	return degre_f
+
+def resolve_v2(d, degre):
+	if  degre > 1:
+		calculate_second(d['X^2'], d['X^1'], d['X^0'])
+	else:
+		calculate_simple(d['X^1'], d['X^0'])
+
 
 def v2(s):
 	s = s.replace('- ', ' + -')
@@ -323,14 +343,17 @@ def v2(s):
 
 	print(left_x)
 	print(right_x)
-	# sys.exit()
+
 	reduced = merge_d_v2(left_x, right_x)
 	print('\n')
 	print(reduced)
 	print('\n')
-	# print_reduced_v2(reduced)
+
 	print_reduced_v2_v2(reduced)
 
+
+
+	resolve_v2(reduced, print_reduced_degre_v2(reduced))
 
 
 
