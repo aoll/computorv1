@@ -25,6 +25,9 @@ def calculate_simple(b, c):
 
 def calculate_premier(des, a, b, c):
 	x = -b / (2*a)
+	i = float(int(x))
+	if i == x:
+		x = int(x)
 	print('Discriminant is null, the solution is:')
 	print(x)
 
@@ -209,9 +212,11 @@ def v2(s):
 
 if __name__ == '__main__':
 		# resolve_simple(sys.argv[1])
-
-		v2(sys.argv[1].strip())
-
+		try:
+			v2(sys.argv[1].strip())
+			sys.exit()
+		except:
+			pass
 		sys.exit()
 		if is_infinite_solution(sys.argv[1]) == 1:
 			print('Every real number are solution')
