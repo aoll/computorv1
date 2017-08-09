@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 import sys
 import re
-# from math import sqrt
 
 def test(a1, a2):
         """
@@ -10,27 +9,18 @@ def test(a1, a2):
         """
         print(a1, a2)
 
-def resolve_simple(arg):
-	equa = arg.split('=')
-	equa = equa[0].split(' ')
-	a = equa[0].replace('x', '')
-	if a == '':
-		a = '1'
-	if a == '-':
-		a = '-1'
-	a = float(a)
-	b = equa[2]
-	b = float(b)
-	b = b * -1 if equa[1] == '-' else b
-	result = b * -1 / a
-	print(float(result))
-
 def descriminant(a, b, c):
 	des = b * b - 4 * a * c
 	return des
 
 def calculate_simple(b, c):
+	if b == 0:
+		print('Is no solution.')
+		sys.exit()
 	x = -c / b
+	i = float(int(x))
+	if i == x:
+		x = int(x)
 	print("The solution is:\n" + str(x))
 
 def calculate_premier(des, a, b, c):
@@ -179,6 +169,12 @@ def resolve_v2(d, degre):
 	if tmp == 0:
 		print('Every real are solution.')
 		sys.exit()
+	if 'X^2' not in d:
+		d['X^2'] = 0
+	if 'X^1' not in d:
+		d['X^1'] = 0
+	if 'X^0' not in d:
+		d['X^0'] = 0
 	if  degre > 1:
 		calculate_second(d['X^2'], d['X^1'], d['X^0'])
 	else:
@@ -194,28 +190,28 @@ def v2(s):
 	left_x = decompose_x(left)
 	right_x = decompose_x(right)
 
-	print(left_x)
-	print(right_x)
+	# print(left_x)
+	# print(right_x)
 
 	reduced = merge_d_v2(left_x, right_x)
-	print('\n')
-	print(reduced)
-	print('\n')
+	# print('\n')
+	# print(reduced)
+	# print('\n')
 
 	print_reduced_v2_v2(reduced)
 
 
+	degre = print_reduced_degre_v2(reduced)
 
-	resolve_v2(reduced, print_reduced_degre_v2(reduced))
+	resolve_v2(reduced, degre)
 
 
 
 if __name__ == '__main__':
 		# resolve_simple(sys.argv[1])
-		try:
-			v2(sys.argv[1].strip())
-		except:
-			pass
+
+		v2(sys.argv[1].strip())
+
 		sys.exit()
 		if is_infinite_solution(sys.argv[1]) == 1:
 			print('Every real number are solution')
