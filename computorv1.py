@@ -34,7 +34,7 @@ def calculate_premier(des, a, b, c):
 def calculate_second(a, b, c):
 	des = descriminant(a, b, c)
 	if des < 0:
-		print('No solution\n')
+		print('Discriminant is strictly negative, no solution.')
 		return
 	if des == 0:
 		calculate_premier(des, a, b, c)
